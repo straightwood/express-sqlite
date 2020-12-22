@@ -10,8 +10,9 @@ var sqliteDB = new SqliteDB(file);
  
 /// create table.
 var createMemberTableSql = "create table if not exists members(username varchar(15), password varchar(20), nickname varchar(15));";
-// var createTileTableSql = "create table if not exists members(level INTEGER, column INTEGER, row INTEGER, content BLOB);";
+var createCityTableSql = "create table if not exists city(city varchar(10), created datetime);";
 sqliteDB.createTable(createMemberTableSql);
+sqliteDB.createTable(createCityTableSql);
  
 /// insert data.
 var memberData = [['user','123456','nickname']];
@@ -64,7 +65,23 @@ app.get('/modifypassword', function(req, res) {
                 res.send(objects);
             });
         }
+    });
+});
 
+app.get('/insertcity', function(req, res) {
+    var memberData = [[req.query.city,req.query.time]];
+    var insertMemberSql = "insert into city(city, created) values(?, ?)";
+    sqliteDB.insertData(insertMemberSql, memberData);
+    querySql = "select * from city order by created desc limit 3";
+    sqliteDB.queryData(querySql,(objects)=>{
+        res.send(objects);
+    });
+});
+
+app.get('/getthreecity', function(req, res) {
+    querySql = "select * from city order by created desc limit 3";
+    sqliteDB.queryData(querySql,(objects)=>{
+        res.send(objects);
     });
 });
 
